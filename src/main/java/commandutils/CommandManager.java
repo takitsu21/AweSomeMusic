@@ -20,7 +20,7 @@ public class CommandManager {
 
         Command commandToRun = null;
 
-        for (Command command: commands) {
+        for (Command command : commands) {
 
             if (context.getLabel().equalsIgnoreCase(command.getName())) {
                 commandToRun = command;
@@ -43,11 +43,12 @@ public class CommandManager {
 
     /**
      * Checks if a command with the same identifier is registered.
+     *
      * @param command Command to check.
      * @return Whether or not the given command is registered.
      */
     private static boolean commandExists(Command command) {
-        for (Command existingCommand: commands) {
+        for (Command existingCommand : commands) {
             if (command.equals(existingCommand)) {
                 return true;
             }
@@ -57,6 +58,7 @@ public class CommandManager {
 
     /**
      * Registers the command. (Checks with {@link #commandExists(Command)})
+     *
      * @param command The command to register
      */
     public static void registerCommand(Command command) {
@@ -67,6 +69,7 @@ public class CommandManager {
 
     /**
      * Attempts to unregister a command will unregister any command that is equal to it from {@link Command#equals(Command)}.
+     *
      * @param command Command to unregister
      */
     public static void unregisterCommand(Command command) {
@@ -82,6 +85,7 @@ public class CommandManager {
 
     /**
      * Gets the command prefix for all commandutils.
+     *
      * @return The prefix for all commandutils.
      */
     public static String getPrefix() {
@@ -90,6 +94,7 @@ public class CommandManager {
 
     /**
      * Gets a list of all the registered commandutils
+     *
      * @return A list of all the registered commandutils.
      */
     public static List<Command> getCommands() {
