@@ -1,21 +1,26 @@
-package commandutils;
+package commands.util;
 
-/**
- * This interface should be implemented into any command and you should register that command via the CommandManager.
- */
-public interface Command {
+import commandutils.Command;
+import commandutils.CommandContext;
 
+public class HelpCommand implements Command {
     /**
      * @return The identifier for the command
      */
-    public String getName();
+    @Override
+    public String getName() {
+        return "help";
+    }
 
     /**
      * This can be used with {@link #getUsage()} to create a help command
      *
      * @return The description of the command
      */
-    public String getDescription();
+    @Override
+    public String getDescription() {
+        return "Show bot commands";
+    }
 
     /**
      * This cn be used with {@link #getDescription()} to create a help command.
@@ -23,28 +28,26 @@ public interface Command {
      *
      * @return the usage of the command
      */
-    public String getUsage();
+    @Override
+    public String getUsage() {
+        return "help";
+    }
 
     /**
      * @return A list of aliases for the command
      */
-    public String[] getAliases();
+    @Override
+    public String[] getAliases() {
+        return new String[]{"h"};
+    }
 
     /**
      * Runs the command that this command represents
      *
      * @param ctx The context in which to run the command
      */
-    public void onCommand(CommandContext ctx);
+    @Override
+    public void onCommand(CommandContext ctx) {
 
-    /**
-     * Checks another command for equality
-     *
-     * @param command Command to check against
-     * @return Whether the commands have the same identifier
-     */
-    public default boolean equals(Command command) {
-        return this.getName().equals(command.getName());
     }
 }
-

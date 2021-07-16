@@ -1,14 +1,14 @@
 package util.lavaplayer;
 
+import bot.Logger;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import commandutils.CommandContext;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -29,6 +29,13 @@ public class PlayerManager {
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
     }
 
+    public static PlayerManager getINSTANCE() {
+        if (INSTANCE == null) {
+            INSTANCE = new PlayerManager();
+        }
+        return INSTANCE;
+    }
+
     public GuildMusicManager getMusicManager(Guild guild) {
         return musicManagers.computeIfAbsent(guild.getIdLong(), (guilId) -> {
             GuildMusicManager guildMusicManager = new GuildMusicManager(audioPlayerManager);
@@ -39,24 +46,33 @@ public class PlayerManager {
         });
     }
 
-    public void loadAndPlay(TextChannel channel, String musicUrl) {
+    public void loadAndPlay(CommandContext ctx, String musicUrl) {
+        TextChannel channel = ctx.getChannel();
         GuildMusicManager musicManager = getMusicManager(channel.getGuild());
 
-//        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-//        AudioSourceManagers.registerRemoteSources(playerManager);
-//        AudioPlayer player = playerManager.createPlayer();
-//        TrackScheduler trackScheduler = new TrackScheduler(player);
-//        AudioPlayerSendHandler aps = new AudioPlayerSendHandler(player);
 
         audioPlayerManager.loadItemOrdered(musicManager, musicUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.scheduler.queue(track);
-                channel.sendMessage(String.format("Adding to queue: %s", track.getInfo().title)).queue();
+//                EmbedBuilder embed = new EmbedBuilder();
+//                embed.setColor(Color.RED);
+//                embed.setAuthor(track.getInfo().title, track.getInfo().uri, ctx.getMember().getUser().getAvatarUrl());
+//                embed.setThumbnail(ctx.getSelfUser().getDefaultAvatarUrl());
+//                embed.setFooter(Long.toString(track.getDuration()), ctx.getGuild().getIconUrl());
+//                channel.sendMessageEmbeds(embed.build()).queue();
+                channel.sendMessage(String.format("Adding to queue: `%s` by `%s`",
+                        track.getInfo().title,
+                        track.getInfo().author))
+                        .queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
+                channel.sendMessage(String.format("Adding playlist `%s` (`%d` songs)",
+                        playlist.getName(),
+                        playlist.getTracks().size()))
+                        .queue();
                 for (AudioTrack track : playlist.getTracks()) {
                     musicManager.scheduler.queue(track);
                 }
@@ -65,19 +81,15 @@ public class PlayerManager {
             @Override
             public void noMatches() {
                 // Notify the user that we've got nothing
+                channel.sendMessage("We couldn't find any music with that name sorry!").queue();
             }
 
             @Override
             public void loadFailed(FriendlyException throwable) {
                 // Notify the user that everything exploded
+                channel.sendMessage("An error occured! " + throwable.getMessage()).queue();
+                Logger.error(throwable.getMessage());
             }
         });
-    }
-
-    public static PlayerManager getINSTANCE() {
-        if (INSTANCE == null) {
-            INSTANCE = new PlayerManager();
-        }
-        return INSTANCE;
     }
 }

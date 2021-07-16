@@ -12,7 +12,12 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Enumeration;
 import java.util.Objects;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class AweSomeBot {
     private static DefaultShardManagerBuilder client;
@@ -31,7 +36,7 @@ public class AweSomeBot {
         }
     }
 
-    private static void prepareAndBuildClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException, LoginException {
+    private static void prepareAndBuildClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException, LoginException, URISyntaxException, IOException {
         client.setActivity(Activity.playing("JDA testing"));
         configureMemoryUsage(client);
         client.addEventListeners(new EventsListener());
@@ -73,12 +78,36 @@ public class AweSomeBot {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    private static void loadCommands() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        File dir = new File("./src/main/java/commands/");
-        for (File file : Objects.requireNonNull(dir.listFiles())) {
-            String className = file.getName().split(".java")[0];
-            Class<?> c = Class.forName("commands." + className);
-            CommandManager.registerCommand((Command) c.newInstance());
+    private static void loadCommands() throws ClassNotFoundException, InstantiationException, IllegalAccessException, URISyntaxException, IOException {
+        String ressource = AweSomeBot.class
+                .getProtectionDomain()
+                .getCodeSource()
+                .getLocation()
+                .toURI()
+                .getPath();
+        try {
+            JarFile jarFile = new JarFile(ressource);
+
+            for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
+                JarEntry entry = entries.nextElement();
+                String file = entry.getName();
+                if (file.startsWith("commands") && file.endsWith(".class")) {
+                    String classname = file.replace('/', '.').substring(0, file.length() - 6);
+                    try {
+                        Class<?> c = Class.forName(classname);
+                        CommandManager.registerCommand((Command) c.newInstance());
+                    } catch (Throwable e) {
+                        System.out.println("WARNING: failed to instantiate " + classname + " from " + file);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            File dir = new File(ressource + "/commands/");
+            for (File file : Objects.requireNonNull(dir.listFiles())) {
+                String className = file.getName().split(".java")[0];
+                Class<?> c = Class.forName("commands." + className);
+                CommandManager.registerCommand((Command) c.newInstance());
+            }
         }
     }
 

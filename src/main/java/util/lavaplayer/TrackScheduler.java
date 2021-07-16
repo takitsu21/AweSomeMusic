@@ -47,8 +47,12 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
-            // Start next track
+            nextTrack();
         }
+//        switch (endReason) {
+//            case FINISHED:
+//        }
+
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
         // endReason == LOAD_FAILED: Loading of a track failed (mayStartNext = true).
@@ -66,5 +70,10 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
         // Audio track has been unable to provide us any audio, might want to just start a new track
+        nextTrack();
+    }
+
+    public BlockingQueue<AudioTrack> getQueue() {
+        return queue;
     }
 }

@@ -21,9 +21,9 @@ public class CommandContext {
     private String[] args;
 
     /**
-     * @param e       Event received
-     * @param label   The label used to call the command
-     * @param args    The args passed with the command
+     * @param e     Event received
+     * @param label The label used to call the command
+     * @param args  The args passed with the command
      */
     public CommandContext(GuildMessageReceivedEvent e, String label, String[] args) {
         this.e = e;
