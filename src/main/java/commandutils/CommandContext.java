@@ -74,5 +74,9 @@ public class CommandContext {
         return args;
     }
 
+    public SelfUser getSelfUser() {
+        return e.getJDA().getSelfUser();
+    }
+
 }
 

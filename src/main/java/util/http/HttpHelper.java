@@ -1,4 +1,4 @@
-package util;
+package util.http;
 
 import org.asynchttpclient.*;
 import org.json.JSONObject;
@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class HttpHelper {
-    private DefaultAsyncHttpClientConfig.Builder clientBuilder;
+    private final DefaultAsyncHttpClientConfig.Builder clientBuilder;
 
     public HttpHelper() {
         this.clientBuilder = Dsl.config()

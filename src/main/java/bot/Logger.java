@@ -1,3 +1,5 @@
+package bot;
+
 import java.util.logging.Level;
 
 public class Logger {

@@ -1,3 +1,5 @@
+package bot;
+
 import commandutils.Command;
 import commandutils.CommandManager;
 import listeners.EventsListener;
@@ -47,6 +49,7 @@ public class AweSomeBot {
     public static void configureMemoryUsage(DefaultShardManagerBuilder builder) {
         // Disable cache for member activities (streaming/games/spotify)
         builder.disableCache(CacheFlag.ACTIVITY);
+        builder.enableCache(CacheFlag.VOICE_STATE);
 
         // Only cache members who are either in a voice channel or owner of the guild
         builder.setMemberCachePolicy(MemberCachePolicy.VOICE.or(MemberCachePolicy.OWNER));
@@ -56,6 +59,7 @@ public class AweSomeBot {
 
         // Disable presence updates and typing events
         builder.disableIntents(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING);
+        builder.enableIntents(GatewayIntent.GUILD_VOICE_STATES);
 
         // Consider guilds with more than 50 members as "large".
         // Large guilds will only provide online members in their setup and thus reduce bandwidth if chunking is disabled.
