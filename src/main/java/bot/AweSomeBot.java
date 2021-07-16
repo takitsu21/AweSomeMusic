@@ -10,11 +10,10 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
-import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -27,7 +26,8 @@ public class AweSomeBot {
             System.out.println("You have to provide a token as first argument!");
             System.exit(1);
         }
-
+//        Map<String, String> env = System.getenv();
+//        System.out.println(env);
         client = DefaultShardManagerBuilder.createDefault(args[0]);
         try {
             prepareAndBuildClient();
@@ -36,12 +36,17 @@ public class AweSomeBot {
         }
     }
 
-    private static void prepareAndBuildClient() throws ClassNotFoundException, InstantiationException, IllegalAccessException, LoginException, URISyntaxException, IOException {
-        client.setActivity(Activity.playing("JDA testing"));
-        configureMemoryUsage(client);
-        client.addEventListeners(new EventsListener());
-        client.build();
-        loadCommands();
+    private static void prepareAndBuildClient() {
+        try {
+            client.setActivity(Activity.playing("JDA testing"));
+            configureMemoryUsage(client);
+            client.addEventListeners(new EventsListener());
+            client.build();
+            loadCommands();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -72,19 +77,18 @@ public class AweSomeBot {
     }
 
     /**
-     * Load every commands
      *
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @throws URISyntaxException
      */
-    private static void loadCommands() throws ClassNotFoundException, InstantiationException, IllegalAccessException, URISyntaxException, IOException {
+    private static void loadCommands() throws URISyntaxException {
+
         String ressource = AweSomeBot.class
                 .getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
                 .toURI()
                 .getPath();
+
         try {
             JarFile jarFile = new JarFile(ressource);
 
@@ -95,19 +99,24 @@ public class AweSomeBot {
                     String classname = file.replace('/', '.').substring(0, file.length() - 6);
                     try {
                         Class<?> c = Class.forName(classname);
-                        CommandManager.registerCommand((Command) c.newInstance());
+                        CommandManager.registerCommand((Command) c.getDeclaredConstructor().newInstance());
                     } catch (Throwable e) {
                         System.out.println("WARNING: failed to instantiate " + classname + " from " + file);
                     }
                 }
             }
-        } catch (Exception e) {
-            File dir = new File(ressource + "/commands/");
-            for (File file : Objects.requireNonNull(dir.listFiles())) {
-                String className = file.getName().split(".java")[0];
-                Class<?> c = Class.forName("commands." + className);
-                CommandManager.registerCommand((Command) c.newInstance());
+        } catch (Exception ignored) {
+            try {
+                File dir = new File(ressource + "/commands/");
+                for (File file : Objects.requireNonNull(dir.listFiles())) {
+                    String className = file.getName().split(".java")[0];
+                    Class<?> c = Class.forName("commands." + className);
+                    CommandManager.registerCommand((Command) c.getDeclaredConstructor().newInstance());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         }
     }
 

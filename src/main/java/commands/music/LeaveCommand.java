@@ -52,6 +52,7 @@ public class LeaveCommand implements Command {
         AudioManager audioManager = ctx.getGuild().getAudioManager();
         if (audioManager.isConnected()) {
             audioManager.closeAudioConnection();
+            ctx.getChannel().sendMessage("I'm leaving bye!:wave:").queue();
         } else {
             ctx.getChannel().sendMessage("I'm not in a voice channel!").queue();
         }

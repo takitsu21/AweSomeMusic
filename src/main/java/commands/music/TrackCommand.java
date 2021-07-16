@@ -6,7 +6,7 @@ import commandutils.CommandContext;
 import util.lavaplayer.GuildMusicManager;
 import util.lavaplayer.PlayerManager;
 
-public class TackCommand implements Command {
+public class TrackCommand implements Command {
     /**
      * @return The identifier for the command
      */
