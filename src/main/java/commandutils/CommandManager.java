@@ -1,7 +1,19 @@
 package commandutils;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.reactivestreams.client.MongoCollection;
+import net.dv8tion.jda.api.entities.Guild;
+import org.bson.Document;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import reactor.core.publisher.Mono;
+import util.db.MongoDBManager;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommandManager {
 
@@ -83,14 +95,55 @@ public class CommandManager {
         }
     }
 
-    /**
-     * Gets the command prefix for all commandutils.
-     *
-     * @return The prefix for all commandutils.
-     */
+
     public static String getPrefix() {
         return PREFIX;
     }
+
+    public static String getPrefix(Guild guild) {
+        MongoCollection<Document> collection = MongoDBManager.getCollection("awesomebot", "settings");
+        Map<Long, String> cache = new HashMap<>();
+        collection.find(Filters.eq("guild_id", guild.getIdLong())).first()
+                .subscribe(new Subscriber<Document>() {
+                    @Override
+                    public void onSubscribe(Subscription subscription) {
+                        System.out.println("on subscribe");
+                        subscription.request(1);
+
+                    }
+
+                    @Override
+                    public void onNext(Document document) {
+                        System.out.println("on next");
+                        if (document != null) {
+                            cache.put(guild.getIdLong(), document.toJson());
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        System.out.println(throwable.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        System.out.println("query complete");
+                    }
+                });
+
+
+//               ;
+        System.out.println(cache);
+        System.out.println(cache.get(guild.getIdLong()));
+
+        if (cache.get(guild.getIdLong()) == null) {
+            collection.insertOne(new Document("guild_id", guild.getIdLong()).append("prefix", PREFIX));
+        }
+        return cache.get(guild.getIdLong()) != null ? cache.get(guild.getIdLong()) : PREFIX;
+    }
+
 
     /**
      * Gets a list of all the registered commandutils

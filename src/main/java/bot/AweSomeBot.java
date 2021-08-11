@@ -1,5 +1,7 @@
 package bot;
 
+import com.mongodb.client.model.Filters;
+import com.mongodb.reactivestreams.client.MongoCollection;
 import commandutils.Command;
 import commandutils.CommandManager;
 import listeners.EventsListener;
@@ -9,11 +11,15 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.bson.Document;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Mono;
+import util.db.MongoDBManager;
 
+import javax.print.Doc;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -34,6 +40,19 @@ public class AweSomeBot {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        System.out.println(MongoDBManager.getCollection("awesomebot", "settings"));
+//        MongoCollection<Document> collection = MongoDBManager.getCollection("awesomebot", "settings");
+////        SingleResultCallback<Document> guildPrefix = (document, throwable) -> {
+////            System.out.println(" toJson " + document.toJson());
+////        };
+//
+//        long v = Long.parseLong("812662025934995476");
+////        System.out.println(doc.map);
+//        Publisher<Document> doc = collection.find(Filters.eq("guild_id", v)).first();
+//
+//        System.out.println(Objects.requireNonNull(Mono.from(doc).block()).toJson());
+
     }
 
     private static void prepareAndBuildClient() {
@@ -46,7 +65,26 @@ public class AweSomeBot {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+//        MongoCollection<Document> collection = MongoDBManager.getCollection("awesomebot", "settings");
+//
+//        long v = Long.parseLong("812662025934995476");
+//        Publisher<Document> guildPrefix = collection.find(Filters.eq("guild_id", v).first();
+//
+//        final Mono<Document> getPrefix = Mono.from(guildPrefix)
+//                .map(document -> document)
+////                .map(MongoDBManager::getCollection)
+//                .doOnSuccess(consumer -> {
+//                    if (consumer == null) {
+//                        System.out.println("error");
+//                    }
+//                })
+//                .defaultIfEmpty(Document.parse("!"))
+//                .doOnSubscribe(__ -> {
+//                    collection.insertOne(new Document("guild_id", 65465).append("prefix", "!"));
+//                    System.out.println("inserted");
+//                });
+//        System.out.println(getPrefix);
+//        System.out.println(Objects.requireNonNull(getPrefix.block()).toJson());
     }
 
     /**
@@ -77,7 +115,6 @@ public class AweSomeBot {
     }
 
     /**
-     *
      * @throws URISyntaxException
      */
     private static void loadCommands() throws URISyntaxException {
@@ -107,10 +144,10 @@ public class AweSomeBot {
             }
         } catch (Exception ignored) {
             try {
-                File dir = new File(ressource + "/commands/");
+                File dir = new File("./src/main/java/commands/");
                 for (File file : Objects.requireNonNull(dir.listFiles())) {
                     String className = file.getName().split(".java")[0];
-                    Class<?> c = Class.forName("commands." + className);
+                    Class<?> c = Class.forName("commands.*." + className);
                     CommandManager.registerCommand((Command) c.getDeclaredConstructor().newInstance());
                 }
             } catch (Exception e) {
@@ -129,4 +166,5 @@ public class AweSomeBot {
         }
 
     }
+
 }

@@ -48,6 +48,6 @@ public class HelpCommand implements Command {
      */
     @Override
     public void onCommand(CommandContext ctx) {
-
+        ctx.getChannel().sendMessage("test prefix db").queue();
     }
 }

@@ -2,8 +2,12 @@ package listeners;
 
 import commandutils.CommandContext;
 import commandutils.CommandManager;
+import net.dv8tion.jda.api.events.DisconnectEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
+import util.db.MongoDBManager;
 
 public class EventsListener extends ListenerAdapter {
 
@@ -18,5 +22,17 @@ public class EventsListener extends ListenerAdapter {
         CommandContext ctx = new CommandContext(e, command, args);
         CommandManager.runCommand(ctx);
 
+    }
+
+    @Override
+    public void onDisconnect(@NotNull DisconnectEvent event) {
+        MongoDBManager.getClient().close();
+        System.out.println("Bot disconnected");
+    }
+
+    @Override
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        MongoDBManager.getClient().close();
+        System.out.println("Bot disconnected");
     }
 }
