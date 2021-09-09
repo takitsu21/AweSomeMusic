@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
     private static PlayerManager INSTANCE;
@@ -60,12 +59,24 @@ public class PlayerManager {
                 musicManager.scheduler.queue(track);
                 long seconds = track.getDuration() / 1000;
                 EmbedBuilder embed = new EmbedBuilder();
+
                 embed.setColor(Color.RED);
                 embed.setAuthor("\uD83C\uDFB6 Adding to queue \uD83C\uDFB6", track.getInfo().uri, ctx.getMember().getUser().getAvatarUrl());
-                embed.addField("Title", track.getInfo().title, true);
-                embed.addField("Author", track.getInfo().author, true);
+                embed.addField("Title", track.getInfo().title, false);
+                embed.addField("Author", track.getInfo().author, false);
+
                 embed.setThumbnail("http://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg");
-                embed.setFooter(String.format("%02dh:%02dm:%02ds time left", seconds / 3600, (seconds % 3600) / 60, seconds % 60), ctx.getSelfUser().getAvatarUrl());
+                if (track.getInfo().isStream && track.getInfo().uri.contains("twitch")) {
+                    embed.setFooter("\uD83D\uDD34 Live Stream", ctx.getSelfUser().getAvatarUrl());
+                    embed.addField("Platform", "<:twitch:885584876030533682>", false);
+                    embed.setColor(new Color(0x6441a5));
+                } else if (track.getInfo().isStream) {
+                    embed.setFooter("\uD83D\uDD34 Live Stream", ctx.getSelfUser().getAvatarUrl());
+                    embed.addField("Platform", "<:youtube:885583568804384779>", false);
+                } else {
+                    embed.setFooter(String.format("%02dh:%02dm:%02ds time left", seconds / 3600, (seconds % 3600) / 60, seconds % 60), ctx.getSelfUser().getAvatarUrl());
+                    embed.addField("Platform", "<:youtube:885583568804384779>", false);
+                }
                 channel.sendMessageEmbeds(embed.build()).queue();
             }
 
