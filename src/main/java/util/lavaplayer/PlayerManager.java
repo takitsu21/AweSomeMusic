@@ -9,11 +9,14 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import commandutils.CommandContext;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerManager {
     private static PlayerManager INSTANCE;
@@ -55,23 +58,22 @@ public class PlayerManager {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.scheduler.queue(track);
-//                EmbedBuilder embed = new EmbedBuilder();
-//                embed.setColor(Color.RED);
-//                embed.setAuthor(track.getInfo().title, track.getInfo().uri, ctx.getMember().getUser().getAvatarUrl());
-//                embed.setThumbnail(ctx.getSelfUser().getDefaultAvatarUrl());
-//                embed.setFooter(Long.toString(track.getDuration()), ctx.getGuild().getIconUrl());
-//                channel.sendMessageEmbeds(embed.build()).queue();
-                channel.sendMessage(String.format("Adding to queue: `%s` by `%s`",
-                        track.getInfo().title,
-                        track.getInfo().author))
-                        .queue();
+                long seconds = track.getDuration() / 1000;
+                EmbedBuilder embed = new EmbedBuilder();
+                embed.setColor(Color.RED);
+                embed.setAuthor("\uD83C\uDFB6 Adding to queue \uD83C\uDFB6", track.getInfo().uri, ctx.getMember().getUser().getAvatarUrl());
+                embed.addField("Title", track.getInfo().title, true);
+                embed.addField("Author", track.getInfo().author, true);
+                embed.setThumbnail("http://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg");
+                embed.setFooter(String.format("%02dh:%02dm:%02ds time left", seconds / 3600, (seconds % 3600) / 60, seconds % 60), ctx.getSelfUser().getAvatarUrl());
+                channel.sendMessageEmbeds(embed.build()).queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 channel.sendMessage(String.format("Adding playlist `%s` (`%d` songs)",
-                        playlist.getName(),
-                        playlist.getTracks().size()))
+                                playlist.getName(),
+                                playlist.getTracks().size()))
                         .queue();
                 for (AudioTrack track : playlist.getTracks()) {
                     musicManager.scheduler.queue(track);

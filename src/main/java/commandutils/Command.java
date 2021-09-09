@@ -1,5 +1,7 @@
 package commandutils;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * This interface should be implemented into any command and you should register that command via the CommandManager.
  */
@@ -35,7 +37,7 @@ public interface Command {
      *
      * @param ctx The context in which to run the command
      */
-    public void onCommand(CommandContext ctx);
+    public void onCommand(CommandContext ctx) throws ExecutionException, InterruptedException;
 
     /**
      * Checks another command for equality

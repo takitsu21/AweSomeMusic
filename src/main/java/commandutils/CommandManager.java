@@ -4,16 +4,15 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import net.dv8tion.jda.api.entities.Guild;
 import org.bson.Document;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.Mono;
 import util.db.MongoDBManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class CommandManager {
 
@@ -28,7 +27,7 @@ public class CommandManager {
      *
      * @param context This is the context in which to run the command
      */
-    public static void runCommand(CommandContext context) {
+    public static void runCommand(CommandContext context) throws ExecutionException, InterruptedException {
 
         Command commandToRun = null;
 

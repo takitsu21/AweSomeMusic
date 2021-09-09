@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import util.db.MongoDBManager;
 
+import java.util.concurrent.ExecutionException;
+
 public class EventsListener extends ListenerAdapter {
 
     @Override
@@ -20,7 +22,13 @@ public class EventsListener extends ListenerAdapter {
         String command = e.getMessage().getContentStripped().replace(prefix, "").split(" ")[0];
         String[] args = e.getMessage().getContentRaw().replace(prefix, "").replace(command, "").split(" ");
         CommandContext ctx = new CommandContext(e, command, args);
-        CommandManager.runCommand(ctx);
+        try {
+            CommandManager.runCommand(ctx);
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
 
     }
 

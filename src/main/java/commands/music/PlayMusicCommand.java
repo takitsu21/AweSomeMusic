@@ -7,8 +7,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import util.http.HttpHelper;
 import util.lavaplayer.PlayerManager;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class PlayMusicCommand implements Command {
@@ -54,6 +58,25 @@ public class PlayMusicCommand implements Command {
             audioManager.openAudioConnection(vc);
             audioManager.setSelfDeafened(true);
         }
-        PlayerManager.getINSTANCE().loadAndPlay(ctx, ctx.getArgs()[1]);
+        if (!ctx.getArgs()[1].startsWith("http")) {
+            HttpHelper helper = new HttpHelper();
+            try {
+                JSONObject json = helper.getResponseJson("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=2&order=viewCount&q=" + String.join(" ", ctx.getArgs()) + "&key=AIzaSyDuc3lvdWNcYAdOZJk-PiXqpk7f4pYUxz8");
+                JSONArray musicInfo = !json.isEmpty() ? (JSONArray) json.get("items") : null;
+                if (musicInfo == null) {
+                    channel.sendMessage("The song cannot be found!").queue();
+                } else {
+                    JSONObject firstItem = (JSONObject) musicInfo.get(0);
+                    String videoId = ((String)((JSONObject)firstItem.get("id")).get("videoId"));
+                    PlayerManager.getINSTANCE().loadAndPlay(ctx, "https://www.youtube.com/watch?v=" + videoId);
+                }
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+                channel.sendMessage("The song cannot be found!").queue();
+            }
+        } else {
+            PlayerManager.getINSTANCE().loadAndPlay(ctx, ctx.getArgs()[1]);
+        }
+
     }
 }

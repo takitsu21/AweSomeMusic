@@ -14,10 +14,13 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.bson.Document;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Mono;
+import util.config.ConfigContext;
+import util.config.ReadPropertyFile;
 import util.db.MongoDBManager;
 
 import javax.print.Doc;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -26,15 +29,17 @@ import java.util.jar.JarFile;
 
 public class AweSomeBot {
     private static DefaultShardManagerBuilder client;
+    private static ConfigContext cfctx;
 
-    public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("You have to provide a token as first argument!");
-            System.exit(1);
-        }
+    public static void main(String[] args) throws IOException {
+//        if (args.length < 1) {
+//            System.out.println("You have to provide a token as first argument!");
+//            System.exit(1);
+//        }
 //        Map<String, String> env = System.getenv();
 //        System.out.println(env);
-        client = DefaultShardManagerBuilder.createDefault(args[0]);
+        cfctx = new ConfigContext(new ReadPropertyFile());
+        client = DefaultShardManagerBuilder.createDefault(cfctx.getBOT_TOKEN());
         try {
             prepareAndBuildClient();
         } catch (Exception e) {
@@ -61,7 +66,9 @@ public class AweSomeBot {
             configureMemoryUsage(client);
             client.addEventListeners(new EventsListener());
             client.build();
-            loadCommands();
+
+
+            loadCommands(new File("./src/main/java/commands/"), "");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +124,7 @@ public class AweSomeBot {
     /**
      * @throws URISyntaxException
      */
-    private static void loadCommands() throws URISyntaxException {
+    private static void loadCommands(File dir, String currentDir) throws URISyntaxException {
 
         String ressource = AweSomeBot.class
                 .getProtectionDomain()
@@ -144,11 +151,16 @@ public class AweSomeBot {
             }
         } catch (Exception ignored) {
             try {
-                File dir = new File("./src/main/java/commands/");
+//                File dir = new File("./src/main/java/commands/");
                 for (File file : Objects.requireNonNull(dir.listFiles())) {
-                    String className = file.getName().split(".java")[0];
-                    Class<?> c = Class.forName("commands.*." + className);
-                    CommandManager.registerCommand((Command) c.getDeclaredConstructor().newInstance());
+                    if (file.isDirectory()) {
+                        loadCommands(new File(file.getAbsolutePath()), file.getName());
+                    } else {
+                        String className = file.getName().split(".java")[0];
+                        Class<?> c = Class.forName("commands." + currentDir + "." + className);
+                        CommandManager.registerCommand((Command) c.getDeclaredConstructor().newInstance());
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
