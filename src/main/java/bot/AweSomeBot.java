@@ -1,7 +1,5 @@
 package bot;
 
-import com.mongodb.client.model.Filters;
-import com.mongodb.reactivestreams.client.MongoCollection;
 import commandutils.Command;
 import commandutils.CommandManager;
 import listeners.EventsListener;
@@ -11,14 +9,9 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.bson.Document;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 import util.config.ConfigContext;
 import util.config.ReadPropertyFile;
-import util.db.MongoDBManager;
 
-import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -60,14 +53,16 @@ public class AweSomeBot {
 
     }
 
+    public static ConfigContext getCfctx() {
+        return cfctx;
+    }
+
     private static void prepareAndBuildClient() {
         try {
-            client.setActivity(Activity.playing("JDA testing"));
+            client.setActivity(Activity.playing("$help | Alpha testing"));
             configureMemoryUsage(client);
             client.addEventListeners(new EventsListener());
             client.build();
-
-
             loadCommands(new File("./src/main/java/commands/"), "");
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,11 +12,9 @@ import org.json.JSONObject;
 import util.http.HttpHelper;
 import util.lavaplayer.PlayerManager;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class PlayMusicCommand implements Command {
-    // The identifier for the command is "example"
     @Override
     public String getName() {
         return "play";
@@ -27,21 +25,16 @@ public class PlayMusicCommand implements Command {
         return "Play music";
     }
 
-    // This command has no arguments.
     @Override
     public String getUsage() {
-        return "!play <Song Name>";
-        // return "example <required arg> [optional arg]";
+        return "play <Song Name | Song URL>";
     }
 
-    // This command has no aliases
     @Override
     public String[] getAliases() {
         return new String[]{"p"};
-        // return new String[]{"alias1", "alias2"};
     }
 
-    // For this command all we do is reply to tell the member that he ran the command.
     @Override
     public void onCommand(CommandContext ctx) {
         TextChannel channel = ctx.getChannel();
@@ -67,7 +60,7 @@ public class PlayMusicCommand implements Command {
                     channel.sendMessage("The song cannot be found!").queue();
                 } else {
                     JSONObject firstItem = (JSONObject) musicInfo.get(0);
-                    String videoId = ((String)((JSONObject)firstItem.get("id")).get("videoId"));
+                    String videoId = ((String) ((JSONObject) firstItem.get("id")).get("videoId"));
                     PlayerManager.getINSTANCE().loadAndPlay(ctx, "https://www.youtube.com/watch?v=" + videoId);
                 }
             } catch (Exception exc) {

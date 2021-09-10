@@ -24,9 +24,7 @@ public class EventsListener extends ListenerAdapter {
         CommandContext ctx = new CommandContext(e, command, args);
         try {
             CommandManager.runCommand(ctx);
-        } catch (ExecutionException ex) {
-            ex.printStackTrace();
-        } catch (InterruptedException ex) {
+        } catch (ExecutionException | InterruptedException ex) {
             ex.printStackTrace();
         }
 

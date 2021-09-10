@@ -52,7 +52,7 @@ public class StopCommand implements Command {
     public void onCommand(CommandContext ctx) {
         GuildMusicManager guildMusicManager = PlayerManager.getINSTANCE().getMusicManager(ctx.getGuild());
         guildMusicManager.scheduler.getQueue().clear();
-        guildMusicManager.audioPlayer.stopTrack();
+        guildMusicManager.audioPlayer.destroy();
         ctx.getChannel().sendMessage("Music has been successfully stopped and the queue has been cleared.").queue();
     }
 }

@@ -23,7 +23,7 @@ public class NextTrackCommand implements Command {
      */
     @Override
     public String getDescription() {
-        return "Go to the next track";
+        return "Move to the next track";
     }
 
     /**
@@ -42,7 +42,7 @@ public class NextTrackCommand implements Command {
      */
     @Override
     public String[] getAliases() {
-        return new String[0];
+        return new String[]{"skip"};
     }
 
     /**

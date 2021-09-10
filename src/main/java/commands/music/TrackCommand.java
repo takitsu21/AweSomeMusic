@@ -55,11 +55,7 @@ public class TrackCommand implements Command {
         GuildMusicManager guildMusicManager = PlayerManager.getINSTANCE().getMusicManager(ctx.getGuild());
         AudioTrack currentTrack = guildMusicManager.audioPlayer.getPlayingTrack();
         if (currentTrack != null) {
-            ctx.getChannel().sendMessage(String.format("Current track `%s` by `%s` duration : `%s`",
-                            currentTrack.getInfo().title,
-                            currentTrack.getInfo().author,
-                            TrackHelper.readableHumanTime(currentTrack.getDuration())))
-                    .queue();
+            ctx.getChannel().sendMessageEmbeds(TrackHelper.generateEmbedPlayingSong(ctx, currentTrack)).queue();
         } else {
             ctx.getChannel().sendMessage("No sound running!").queue();
         }

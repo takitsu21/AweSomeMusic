@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 public class CommandManager {
 
     // This will be the prefix required in front of all the commandutils.
-    private static final String PREFIX = "!";
+    private static final String PREFIX = "$";
 
     // This is a list of all the Commands that are registered.
     private static List<Command> commands = new ArrayList<>();

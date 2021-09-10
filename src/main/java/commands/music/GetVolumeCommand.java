@@ -50,10 +50,10 @@ public class GetVolumeCommand implements Command {
     @Override
     public void onCommand(CommandContext ctx) {
         ctx.getChannel().sendMessage(String.format(
-                "Current volume `%s`", PlayerManager.getINSTANCE()
-                        .getMusicManager(ctx.getGuild())
-                        .audioPlayer
-                        .getVolume()))
+                        "Current volume `%s`", PlayerManager.getINSTANCE()
+                                .getMusicManager(ctx.getGuild())
+                                .audioPlayer
+                                .getVolume()))
                 .queue();
     }
 }

@@ -56,8 +56,8 @@ public class SetVolumeCommand implements Command {
             return;
         }
         ctx.getChannel().sendMessage(String.format("New volume from `%s` to `%s`",
-                guildMusicManager.audioPlayer.getVolume(),
-                ctx.getArgs()[1]))
+                        guildMusicManager.audioPlayer.getVolume(),
+                        ctx.getArgs()[1]))
                 .queue();
         guildMusicManager.audioPlayer.setVolume(Integer.parseInt(ctx.getArgs()[1]));
     }

@@ -10,14 +10,14 @@ public interface Command {
     /**
      * @return The identifier for the command
      */
-    public String getName();
+    String getName();
 
     /**
      * This can be used with {@link #getUsage()} to create a help command
      *
      * @return The description of the command
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * This cn be used with {@link #getDescription()} to create a help command.
@@ -25,19 +25,19 @@ public interface Command {
      *
      * @return the usage of the command
      */
-    public String getUsage();
+    String getUsage();
 
     /**
      * @return A list of aliases for the command
      */
-    public String[] getAliases();
+    String[] getAliases();
 
     /**
      * Runs the command that this command represents
      *
      * @param ctx The context in which to run the command
      */
-    public void onCommand(CommandContext ctx) throws ExecutionException, InterruptedException;
+    void onCommand(CommandContext ctx) throws ExecutionException, InterruptedException;
 
     /**
      * Checks another command for equality
@@ -45,7 +45,7 @@ public interface Command {
      * @param command Command to check against
      * @return Whether the commands have the same identifier
      */
-    public default boolean equals(Command command) {
+    default boolean equals(Command command) {
         return this.getName().equals(command.getName());
     }
 }

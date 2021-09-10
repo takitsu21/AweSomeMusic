@@ -1,5 +1,6 @@
 package util.db;
 
+import bot.AweSomeBot;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
@@ -11,38 +12,17 @@ import org.bson.Document;
 public class MongoDBManager {
     private static MongoClient CLIENT;
 
-
-//    static {
-//
-//    }
-
     public static MongoClient getClient() {
         if (CLIENT == null) {
             final MongoClientSettings.Builder settingsBuilder = MongoClientSettings.builder()
                     .applicationName("AweSomeBot");
-            final String username = "dylann";
-            final String pwd = "3pNti27xpqkfhN8";
-            final String host = "cluster0.qc0gw.mongodb.net:";
-            final String port = "27017";
+            final String username = AweSomeBot.getCfctx().getMONGO_USERNAME();
+            final String pwd = AweSomeBot.getCfctx().getMONGO_PWD();
+            final String host = AweSomeBot.getCfctx().getMONGO_HOST();
+            final String port = AweSomeBot.getCfctx().getMONGO_PORT();
             settingsBuilder.applyConnectionString(new ConnectionString(
                     String.format("mongodb://%s:%s@%s%s/%s", username, pwd, host, port, "awesomebot")));
             CLIENT = MongoClients.create(settingsBuilder.build());
-
-//            ClusterSettings clusterSettings = ClusterSettings.builder().hosts(Arrays.asList(
-//                    new ServerAddress("cluster0.qc0gw.mongodb.net:27017"),
-//                    new ServerAddress("cluster0-shard-00-01.qc0gw.mongodb.net:27017"),
-//                    new ServerAddress("cluster0-shard-00-00.qc0gw.mongodb.net:27017"),
-//                    new ServerAddress("cluster0-shard-00-02.qc0gw.mongodb.net:27017")))
-//                    .applyConnectionString(new ConnectionString("mongodb://dylann:3pNti27xpqkfhN8@cluster0.qc0gw.mongodb.net/test?authSource=admin&replicaSet=atlas-14o7yb-shard-0&readPreference=primary&maxPoolSize=200"))
-//                    .build();
-//            MongoClientSettings settings = MongoClientSettings.builder().clusterSettings(clusterSettings).build();
-//            client = MongoClients.create(settings);
-//            ConnectionString connectionString = new ConnectionString("mongodb://dylann:3pNti27xpqkfhN8@cluster0-shard-00-00.qc0gw.mongodb.net:27017,cluster0-shard-00-01.qc0gw.mongodb.net:27017,cluster0-shard-00-02.qc0gw.mongodb.net:27017/awesomebot?replicaSet=atlas-14o7yb-shard-0&authSource=admin&w=majority");
-//            MongoClientSettings settings = MongoClientSettings.builder().
-//                    .applyConnectionString(connectionString)
-//                    .build();
-//            CLIENT = MongoClients.create(connectionString);
-//            client = MongoClients.create("mongodb://dylann:3pNti27xpqkfhN8@cluster0.qc0gw.mongodb.net/test?authSource=admin&replicaSet=atlas-14o7yb-shard-0&readPreference=primary&maxPoolSize=200");
         }
 
         return CLIENT;

@@ -21,7 +21,7 @@ public class PauseCommand implements Command {
      */
     @Override
     public String getDescription() {
-        return "Pause the current music.";
+        return "Pause the current track.";
     }
 
     /**

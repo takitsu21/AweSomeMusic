@@ -1,7 +1,5 @@
 package util.config;
 
-import util.lavaplayer.PlayerManager;
-
 import java.io.IOException;
 import java.util.Properties;
 

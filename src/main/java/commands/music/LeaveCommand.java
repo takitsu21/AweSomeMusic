@@ -3,6 +3,8 @@ package commands.music;
 import commandutils.Command;
 import commandutils.CommandContext;
 import net.dv8tion.jda.api.managers.AudioManager;
+import util.lavaplayer.GuildMusicManager;
+import util.lavaplayer.PlayerManager;
 
 public class LeaveCommand implements Command {
     /**
@@ -51,6 +53,9 @@ public class LeaveCommand implements Command {
     public void onCommand(CommandContext ctx) {
         AudioManager audioManager = ctx.getGuild().getAudioManager();
         if (audioManager.isConnected()) {
+            GuildMusicManager guildMusicManager = PlayerManager.getINSTANCE().getMusicManager(ctx.getGuild());
+            guildMusicManager.scheduler.getQueue().clear();
+            guildMusicManager.audioPlayer.destroy();
             audioManager.closeAudioConnection();
             ctx.getChannel().sendMessage("I'm leaving bye!:wave:").queue();
         } else {
