@@ -57,26 +57,7 @@ public class PlayerManager {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.scheduler.queue(track);
-                EmbedBuilder embed = new EmbedBuilder();
-
-                embed.setColor(Color.RED);
-                embed.setAuthor("\uD83C\uDFB6 Adding to queue \uD83C\uDFB6", track.getInfo().uri, ctx.getMember().getUser().getAvatarUrl());
-                embed.addField("Title", track.getInfo().title, false);
-                embed.addField("Author", track.getInfo().author, false);
-
-                embed.setThumbnail("http://img.youtube.com/vi/" + track.getInfo().identifier + "/0.jpg");
-                if (track.getInfo().isStream && track.getInfo().uri.contains("twitch")) {
-                    embed.setFooter("\uD83D\uDD34 Live Stream", ctx.getSelfUser().getAvatarUrl());
-                    embed.addField("Platform", "<:twitch:885584876030533682>", false);
-                    embed.setColor(new Color(0x6441a5));
-                } else if (track.getInfo().isStream) {
-                    embed.setFooter("\uD83D\uDD34 Live Stream", ctx.getSelfUser().getAvatarUrl());
-                    embed.addField("Platform", "<:youtube:885583568804384779>", false);
-                } else {
-                    embed.setFooter(TrackHelper.readableHumanTime(track.getDuration()), ctx.getSelfUser().getAvatarUrl());
-                    embed.addField("Platform", "<:youtube:885583568804384779>", false);
-                }
-                channel.sendMessageEmbeds(embed.build()).queue();
+                channel.sendMessageEmbeds(TrackHelper.generateEmbedPlayingSong(ctx, track)).queue();
             }
 
             @Override

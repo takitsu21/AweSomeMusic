@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import commandutils.Command;
 import commandutils.CommandContext;
 import util.lavaplayer.PlayerManager;
+import util.lavaplayer.TrackHelper;
 import util.lavaplayer.TrackScheduler;
 
 public class NextTrackCommand implements Command {
@@ -56,13 +57,10 @@ public class NextTrackCommand implements Command {
             ctx.getChannel().sendMessage("No tracks in the queue!").queue();
             return;
         }
-        scheduler.nextTrack();
         AudioTrack currentTrack = scheduler.getQueue().peek();
         if (currentTrack != null) {
-            ctx.getChannel().sendMessage(String.format(
-                    "Next track `%s` by `%s`",
-                    currentTrack.getInfo().title,
-                    currentTrack.getInfo().author)).queue();
+            ctx.getChannel().sendMessageEmbeds(TrackHelper.generateEmbedPlayingSong(ctx, currentTrack)).queue();
+            scheduler.nextTrack();
         } else {
             ctx.getChannel().sendMessage("Queue is empty!").queue();
         }
