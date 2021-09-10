@@ -55,7 +55,8 @@ public class PauseCommand implements Command {
             ctx.getChannel().sendMessage("The bot isn't connected in any channel yet!").queue();
             return;
         }
-        if (guildMusicManager.scheduler.getQueue().isEmpty()) {
+
+        if (guildMusicManager.audioPlayer.getPlayingTrack() == null) {
             ctx.getChannel().sendMessage("No song running for the moment!").queue();
             return;
         }

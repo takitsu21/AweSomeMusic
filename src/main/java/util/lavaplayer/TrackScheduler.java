@@ -65,6 +65,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         // An already playing track threw an exception (track end event will still be received separately)
+        nextTrack();
     }
 
     @Override

@@ -58,23 +58,28 @@ public class QueueCommand implements Command {
     }
 
     private MessageEmbed generateQueueEmbed(CommandContext ctx, GuildMusicManager guildMusicManager) {
+        EmbedBuilder embed = new EmbedBuilder();
         StringBuilder sb = new StringBuilder();
-        int acc = 1;
-        for (AudioTrack audioTrack : guildMusicManager.scheduler.getQueue()) {
-            sb.append("`")
-                    .append(acc)
-                    .append(" - ")
-                    .append(audioTrack.getInfo().title)
-                    .append(" by ")
-                    .append(audioTrack.getInfo().author)
-                    .append("`\n");
-            if (acc == 25) {
-                break;
+        if (guildMusicManager.scheduler.getQueue().isEmpty()) {
+            sb.append("Queue is empty");
+        } else {
+            int acc = 1;
+            for (AudioTrack audioTrack : guildMusicManager.scheduler.getQueue()) {
+                sb.append("`")
+                        .append(acc)
+                        .append(" - ")
+                        .append(audioTrack.getInfo().title)
+                        .append(" by ")
+                        .append(audioTrack.getInfo().author)
+                        .append("`\n");
+                if (acc == 25) {
+                    break;
+                }
+                acc++;
             }
-            acc++;
         }
         AudioTrack currentTrack = guildMusicManager.scheduler.getQueue().peek();
-        EmbedBuilder embed = new EmbedBuilder();
+
         embed.setThumbnail(ctx.getSelfUser().getAvatarUrl());
         embed.setAuthor("Queue songs",
                 currentTrack != null ? currentTrack.getInfo().uri : null,

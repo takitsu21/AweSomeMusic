@@ -2,6 +2,8 @@ package commands.util;
 
 import commandutils.Command;
 import commandutils.CommandContext;
+import commandutils.CommandManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public class HelpCommand implements Command {
     /**
@@ -48,6 +50,12 @@ public class HelpCommand implements Command {
      */
     @Override
     public void onCommand(CommandContext ctx) {
-        ctx.getChannel().sendMessage("test prefix db").queue();
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setAuthor("Help command", ctx.getMember().getUser().getAvatarUrl());
+        embed.setFooter(null, ctx.getSelfUser().getAvatarUrl());
+        for (Command command : CommandManager.getCommands()) {
+            embed.addField(String.format("`%s`", command.getUsage()), command.getDescription(), false);
+        }
+        ctx.getChannel().sendMessageEmbeds(embed.build()).queue();
     }
 }

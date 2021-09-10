@@ -11,7 +11,7 @@ public class HttpHelper {
 
     public HttpHelper() {
         this.clientBuilder = Dsl.config()
-                .setConnectTimeout(500);
+                .setConnectTimeout(1000);
     }
 
     public JSONObject getResponseJson(String url) throws ExecutionException, InterruptedException {

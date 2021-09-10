@@ -70,8 +70,8 @@ public class PlayMusicCommand implements Command {
                     String videoId = ((String)((JSONObject)firstItem.get("id")).get("videoId"));
                     PlayerManager.getINSTANCE().loadAndPlay(ctx, "https://www.youtube.com/watch?v=" + videoId);
                 }
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
+            } catch (Exception exc) {
+                exc.printStackTrace();
                 channel.sendMessage("The song cannot be found!").queue();
             }
         } else {

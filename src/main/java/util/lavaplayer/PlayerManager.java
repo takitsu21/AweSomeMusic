@@ -57,7 +57,6 @@ public class PlayerManager {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.scheduler.queue(track);
-                long seconds = track.getDuration() / 1000;
                 EmbedBuilder embed = new EmbedBuilder();
 
                 embed.setColor(Color.RED);
@@ -74,7 +73,7 @@ public class PlayerManager {
                     embed.setFooter("\uD83D\uDD34 Live Stream", ctx.getSelfUser().getAvatarUrl());
                     embed.addField("Platform", "<:youtube:885583568804384779>", false);
                 } else {
-                    embed.setFooter(String.format("%02dh:%02dm:%02ds time left", seconds / 3600, (seconds % 3600) / 60, seconds % 60), ctx.getSelfUser().getAvatarUrl());
+                    embed.setFooter(TrackHelper.readableHumanTime(track.getDuration()), ctx.getSelfUser().getAvatarUrl());
                     embed.addField("Platform", "<:youtube:885583568804384779>", false);
                 }
                 channel.sendMessageEmbeds(embed.build()).queue();

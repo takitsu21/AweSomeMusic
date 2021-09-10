@@ -5,6 +5,7 @@ import commandutils.Command;
 import commandutils.CommandContext;
 import util.lavaplayer.GuildMusicManager;
 import util.lavaplayer.PlayerManager;
+import util.lavaplayer.TrackHelper;
 
 public class TrackCommand implements Command {
     /**
@@ -53,11 +54,11 @@ public class TrackCommand implements Command {
     public void onCommand(CommandContext ctx) {
         GuildMusicManager guildMusicManager = PlayerManager.getINSTANCE().getMusicManager(ctx.getGuild());
         AudioTrack currentTrack = guildMusicManager.audioPlayer.getPlayingTrack();
-        if (currentTrack != null)  {
+        if (currentTrack != null) {
             ctx.getChannel().sendMessage(String.format("Current track `%s` by `%s` duration : `%s`",
-                    currentTrack.getInfo().title,
-                    currentTrack.getInfo().author,
-                    currentTrack.getDuration()))
+                            currentTrack.getInfo().title,
+                            currentTrack.getInfo().author,
+                            TrackHelper.readableHumanTime(currentTrack.getDuration())))
                     .queue();
         } else {
             ctx.getChannel().sendMessage("No sound running!").queue();
