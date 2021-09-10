@@ -1,0 +1,7 @@
+version: "3.3"
+
+services:
+  bot:
+    image: awesomebot
+    build: .
+    command: java -jar AweSomeMusic-1.0-SNAPSHOT.jar
